@@ -1,13 +1,13 @@
-class InvalidDataError extends Error {
+class InvalidData extends Error {
     public statusCode: number;
     public errorCode: string;
 
     constructor(message: string, errorCode: string = 'INVALID_DATA') {
         super(message);
-        this.name = 'InvalidDataError'; 
+        this.name = 'InvalidData'; 
         this.statusCode = 400;
         this.errorCode = errorCode;
     } 
 }
 
-export default InvalidDataError;
+export default InvalidData;

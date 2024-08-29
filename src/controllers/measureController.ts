@@ -4,6 +4,12 @@ import { isString } from '../utils/isString';
 import InvalidDataError from '../errors/InvalidData';
 import axios from 'axios'
 import dotenv from 'dotenv';
+import CustomerServices from '../services/CustomerServices'
+import MeasureServices from '../services/MeasureServices'
+import DoubleReport from '../errors/DoubleReport';
+
+const customerServices = new CustomerServices();
+const measureServices = new MeasureServices();
 
 dotenv.config();
 
@@ -13,18 +19,26 @@ if (!geminiApiKey) {
     throw new Error("GEMINI_API_KEY não está definida");
 }
 
-interface MeasureRequestBody {
+export interface MeasureRequestBody {
     image: string;
     customer_code: string;
+    customer_id: number;
     measure_datetime: string;
     measure_type: 'WATER' | 'GAS';
 }
 
 class MeasureController {
     async post(body: MeasureRequestBody){
-        this.validateData(body);
         const measureValue = await this.extractTextFromImage(body.image);
-        console.log(measureValue);
+        const customerId = await customerServices.findOrCreateCustomer(body.customer_code);
+        const measureBody = {
+            measure_type: body.measure_type,
+            measure_datetime: body.measure_datetime,
+            customer_id: customerId,
+            measure_value: measureValue
+        }
+        const newMeasure = await measureServices.createMeasure(measureBody)
+        return newMeasure;
     }
 
     validateData(body: MeasureRequestBody) {
@@ -82,6 +96,13 @@ class MeasureController {
             }
         } catch (error) {
             throw new InvalidDataError(`Error extracting text from image: ${error}`);
+        }
+    }
+
+    async validateMeasureMonth(body: MeasureRequestBody) {
+        const measure = await measureServices.findMeasure(body)
+        if(measure){
+            throw new DoubleReport('Leitura do mês já realizada')
         }
     }
 
