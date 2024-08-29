@@ -34,6 +34,7 @@ export interface UpdateMeasureRequestBody {
     measure_uuid: string;
     confirmed_value: number;
 }
+
 class MeasureController {
     async post(body: NewMeasureRequestBody){
         const measureValue = await this.extractTextFromImage(body.image);
@@ -42,7 +43,8 @@ class MeasureController {
             measure_type: body.measure_type,
             measure_datetime: body.measure_datetime,
             customer_id: customerId,
-            measure_value: measureValue
+            measure_value: measureValue,
+            image: body.image
         }
         const newMeasure = await measureServices.createMeasure(measureBody)
         return newMeasure;

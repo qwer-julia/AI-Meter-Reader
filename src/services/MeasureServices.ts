@@ -1,7 +1,8 @@
 import { NewMeasureRequestBody, UpdateMeasureRequestBody } from '../controllers/measureController';
 import { Op } from 'sequelize';
 import CustomerServices from './CustomerServices';
-import { UUID } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid';
+import saveBase64Image from '../utils/saveBase64Image'
 
 const customerServices = new CustomerServices();
 const dataSource = require('../models');
@@ -11,7 +12,8 @@ interface MeasureBody {
     measure_type: string,
     measure_datetime: string,
     customer_id: number,
-    measure_value: number
+    measure_value: number,
+    image: string
 }
 
 interface Measure {
@@ -29,9 +31,10 @@ interface Measure {
 
 class MeasureServices {
     async createMeasure(measureBody: MeasureBody) {
+        const image_url = await this.createImageUrl(measureBody.image)
         const measure = await measureTable.create(measureBody);
         return {
-            image_url: "teste",
+            image_url: image_url,
             measure_value: measure.dataValues.measure_value,
             measure_uuid: measure.dataValues.measure_uuid
            }
@@ -84,6 +87,12 @@ class MeasureServices {
         });
 
         return measures
+    }
+
+    async createImageUrl(base64Image: string){
+        const fileName = `${uuidv4()}.png`;
+        const filePath = await saveBase64Image(base64Image, fileName);
+        return filePath;
     }
 }
 
