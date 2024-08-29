@@ -1,7 +1,7 @@
 import { MeasureRequestBody } from '../controllers/measureController';
 import { Op } from 'sequelize';
-import DoubleReport from '../errors/DoubleReport';
 import CustomerServices from './CustomerServices';
+
 const customerServices = new CustomerServices();
 const dataSource = require('../models');
 const measureTable = dataSource['Measure'];
