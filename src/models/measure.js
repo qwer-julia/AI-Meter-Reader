@@ -4,11 +4,6 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Measure extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       // define association here
     }
@@ -21,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     measure_datetime: DataTypes.DATE,
-    measure_value: DataTypes.STRING,
+    measure_value: DataTypes.INTEGER,
     measure_type: DataTypes.STRING,
-    has_confirmed: DataTypes.BOOLEAN,
+    has_confirmed: {type: DataTypes.BOOLEAN, defaultValue: false},
     image_url: DataTypes.STRING,
     customer_id: {
       type: DataTypes.INTEGER,

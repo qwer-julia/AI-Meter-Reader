@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       measure_value: {
-        type: Sequelize.STRING
+        type: Sequelize.INTEGER
       },
       has_confirmed: {
         type: Sequelize.BOOLEAN

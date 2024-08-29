@@ -10,7 +10,6 @@ class CustomerServices {
         });
         if (!customer) {
             const newCustomer = await customerTable.create({ customer_code: customer_code });
-            console.log(newCustomer)
             return newCustomer.id
         }
         return customer.dataValues.id

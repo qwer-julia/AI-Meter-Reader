@@ -2,6 +2,9 @@ import { isBase64 } from '../utils/isBase64';
 import { isValidDate } from '../utils/isValidDate';
 import { isString } from '../utils/isString';
 import InvalidDataError from '../errors/InvalidData';
+import MeasureNotFound from '../errors/MeasureNotFound';
+import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
+import InvalidType from '../errors/InvalidType';
 import axios from 'axios'
 import dotenv from 'dotenv';
 import CustomerServices from '../services/CustomerServices'
@@ -19,7 +22,7 @@ if (!geminiApiKey) {
     throw new Error("GEMINI_API_KEY não está definida");
 }
 
-export interface MeasureRequestBody {
+export interface NewMeasureRequestBody {
     image: string;
     customer_code: string;
     customer_id: number;
@@ -27,8 +30,12 @@ export interface MeasureRequestBody {
     measure_type: 'WATER' | 'GAS';
 }
 
+export interface UpdateMeasureRequestBody {
+    measure_uuid: string;
+    confirmed_value: number;
+}
 class MeasureController {
-    async post(body: MeasureRequestBody){
+    async post(body: NewMeasureRequestBody){
         const measureValue = await this.extractTextFromImage(body.image);
         const customerId = await customerServices.findOrCreateCustomer(body.customer_code);
         const measureBody = {
@@ -41,8 +48,36 @@ class MeasureController {
         return newMeasure;
     }
 
-    validateData(body: MeasureRequestBody) {
-        const { image, customer_code, measure_datetime, measure_type }: MeasureRequestBody = body;
+    async patch(body: UpdateMeasureRequestBody){
+        const measure = await measureServices.findMeasureByUuid(body.measure_uuid);
+        if(!measure){
+            throw new MeasureNotFound('Leitura do mês não foi encontrada.');
+        }
+        if(measure.has_confirmed){
+            throw new ConfirmationDuplicate('Leitura do mês já realizada.')
+        }
+        return await measureServices.updateMeasure(measure, body);
+    }
+
+    async getCustomerList(customer_code: string, measure_type: any){
+        const validMeasureTypes = ['WATER', 'GAS'];
+
+        if(measure_type && !validMeasureTypes.includes(measure_type.toUpperCase())) {
+            throw new InvalidType('Tipo de medição não permitida.');
+        }
+
+        const customerId = await customerServices.findOrCreateCustomer(customer_code);
+        const measures = await measureServices.findMeasureByCustomer(customerId, measure_type);
+
+        if (measures.length === 0) {
+            throw new MeasureNotFound('Nenhuma leitura encontrada.');
+        }
+
+        return measures;
+    }
+
+    validateNewMeasureData(body: NewMeasureRequestBody) {
+        const { image, customer_code, measure_datetime, measure_type }: NewMeasureRequestBody = body;
 
         if (!image || !customer_code || !measure_datetime || !measure_type) {
             throw new InvalidDataError('All fields are required.');
@@ -61,9 +96,27 @@ class MeasureController {
         }
 
         if (!isString(customer_code)) {
-            throw new InvalidDataError('Customer code must be a string.');
+            throw new InvalidDataError('customer_code must be a string.');
         }
     }
+
+    
+    validateUpdateMeasureData(body: UpdateMeasureRequestBody) {
+        const { measure_uuid, confirmed_value}: UpdateMeasureRequestBody = body;
+
+        if (!measure_uuid || !confirmed_value) {
+            throw new InvalidDataError('All fields are required.');
+        }
+
+        if (!Number.isInteger(confirmed_value)) {
+            throw new InvalidDataError('confirmed_value must be a integer.');
+        }
+
+        if (!isString(measure_uuid)) {
+            throw new InvalidDataError('customer_code must be a string.');
+        }
+    }
+
 
     async extractTextFromImage(base64Image: string) {
         try {
@@ -87,7 +140,7 @@ class MeasureController {
                 const regex = /\b0\d+\b/g;
                 const matches = extractedText.match(regex);
                 if (matches && matches.length > 0) {
-                    return matches[0]
+                    return Number(matches[0]);
                 } else {
                     throw new InvalidDataError('No numerical value found in the text');
                 }
@@ -99,8 +152,8 @@ class MeasureController {
         }
     }
 
-    async validateMeasureMonth(body: MeasureRequestBody) {
-        const measure = await measureServices.findMeasure(body)
+    async validateMeasureMonth(body: NewMeasureRequestBody) {
+        const measure = await measureServices.findMeasureInMonth(body)
         if(measure){
             throw new DoubleReport('Leitura do mês já realizada')
         }
