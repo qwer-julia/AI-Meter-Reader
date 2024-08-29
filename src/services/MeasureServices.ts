@@ -1,33 +1,15 @@
-import { NewMeasureRequestBody, UpdateMeasureRequestBody } from '../controllers/measureController';
 import { Op } from 'sequelize';
-import CustomerServices from './CustomerServices';
 import { v4 as uuidv4 } from 'uuid';
+//utils
 import saveBase64Image from '../utils/saveBase64Image'
+//services
+import CustomerServices from './CustomerServices';
+//types
+import {Measure, MeasureBody, NewMeasureRequestBody, UpdateMeasureRequestBody} from '../types/measureTypes'
 
 const customerServices = new CustomerServices();
 const dataSource = require('../models');
 const measureTable = dataSource['Measure'];
-
-interface MeasureBody {
-    measure_type: string,
-    measure_datetime: string,
-    customer_id: number,
-    measure_value: number,
-    image: string
-}
-
-interface Measure {
-    id: number, 
-    measure_uuid: string,
-    measure_datetime: string,
-    measure_type: 'WATER' | 'GAS',
-    measure_value: number,
-    has_confirmed: boolean,
-    image_url: string,
-    customer_id: number,
-    createdAt: string,
-    updatedAt: string
-}
 
 class MeasureServices {
     async createMeasure(measureBody: MeasureBody) {
@@ -58,21 +40,26 @@ class MeasureServices {
     }
 
     async findMeasureInMonth(measureData: NewMeasureRequestBody){
-        const newMeasureDate = new Date(measureData.measure_datetime);
-        const year = newMeasureDate.getFullYear();
-        const month = newMeasureDate.getMonth();
-        const startOfMonth = new Date(year, month, 1);
-        const endOfMonth = new Date(year, month + 1, 0, 23, 59, 59, 999);
-        const customerId = await customerServices.findOrCreateCustomer(measureData.customer_code)
-        return await measureTable.findOne({
-            where: {
-                measure_datetime: {
-                    [Op.between]: [startOfMonth, endOfMonth]
-                },
-                measure_type: measureData.measure_type,
-                customer_id: customerId
-            }
-        });
+        try{
+            const newMeasureDate = new Date(measureData.measure_datetime);
+            const startOfMonth = new Date(newMeasureDate.getFullYear(), newMeasureDate.getMonth(), 1);
+            const endOfMonth = new Date(newMeasureDate.getFullYear(), newMeasureDate.getMonth() + 1, 0, 23, 59, 59, 999);
+    
+            const customerId = await customerServices.findOrCreateCustomer(measureData.customer_code)
+    
+            const measure = await measureTable.findOne({
+                where: {
+                    measure_datetime: {
+                        [Op.between]: [startOfMonth, endOfMonth]
+                    },
+                    measure_type: measureData.measure_type,
+                    customer_id: customerId
+                }
+            });
+            return measure;
+        } catch (error) {
+            throw new Error('Erro ao buscar medida.');
+        }
     }
 
     async findMeasureByCustomer(customer_id: number, measure_type: 'WATER' | 'GAS' | null){

@@ -1,15 +1,20 @@
+import axios from 'axios'
+import dotenv from 'dotenv';
+// utils
 import { isBase64 } from '../utils/isBase64';
 import { isValidDate } from '../utils/isValidDate';
 import { isString } from '../utils/isString';
+//erros
 import InvalidDataError from '../errors/InvalidData';
 import MeasureNotFound from '../errors/MeasureNotFound';
 import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
 import InvalidType from '../errors/InvalidType';
-import axios from 'axios'
-import dotenv from 'dotenv';
+import DoubleReport from '../errors/DoubleReport';
+//services
 import CustomerServices from '../services/CustomerServices'
 import MeasureServices from '../services/MeasureServices'
-import DoubleReport from '../errors/DoubleReport';
+//types
+import { NewMeasureRequestBody, UpdateMeasureRequestBody } from '../types/measureTypes'
 
 const customerServices = new CustomerServices();
 const measureServices = new MeasureServices();
@@ -22,67 +27,74 @@ if (!geminiApiKey) {
     throw new Error("GEMINI_API_KEY não está definida");
 }
 
-export interface NewMeasureRequestBody {
-    image: string;
-    customer_code: string;
-    customer_id: number;
-    measure_datetime: string;
-    measure_type: 'WATER' | 'GAS';
-}
-
-export interface UpdateMeasureRequestBody {
-    measure_uuid: string;
-    confirmed_value: number;
-}
-
 class MeasureController {
-    async post(body: NewMeasureRequestBody){
-        const measureValue = await this.extractTextFromImage(body.image);
-        const customerId = await customerServices.findOrCreateCustomer(body.customer_code);
-        const measureBody = {
-            measure_type: body.measure_type,
-            measure_datetime: body.measure_datetime,
-            customer_id: customerId,
-            measure_value: measureValue,
-            image: body.image
+    async post(body: NewMeasureRequestBody) {
+        try {
+            const measureValue = await this.extractTextFromImage(body.image);
+            const customerId = await customerServices.findOrCreateCustomer(body.customer_code);
+
+            const newMeasure = await measureServices.createMeasure({
+                measure_type: body.measure_type,
+                measure_datetime: body.measure_datetime,
+                customer_id: customerId,
+                measure_value: measureValue,
+                image: body.image
+            })
+
+            return newMeasure;
+        } catch (error) {
+            throw new Error('Erro ao processar a medida. Por favor, tente novamente.');
         }
-        const newMeasure = await measureServices.createMeasure(measureBody)
-        return newMeasure;
     }
 
-    async patch(body: UpdateMeasureRequestBody){
-        const measure = await measureServices.findMeasureByUuid(body.measure_uuid);
-        if(!measure){
-            throw new MeasureNotFound('Leitura do mês não foi encontrada.');
+    async patch(body: UpdateMeasureRequestBody) {
+        try {
+            const measure = await measureServices.findMeasureByUuid(body.measure_uuid);
+
+            if (!measure) {
+                throw new MeasureNotFound('Leitura do mês não foi encontrada.');
+            }
+
+            if (measure.has_confirmed) {
+                throw new ConfirmationDuplicate('Leitura do mês já realizada.')
+            }
+
+            const updatedMeasure = await measureServices.updateMeasure(measure, body);
+            return updatedMeasure;
+        } catch (error) {
+            throw error;
         }
-        if(measure.has_confirmed){
-            throw new ConfirmationDuplicate('Leitura do mês já realizada.')
-        }
-        return await measureServices.updateMeasure(measure, body);
     }
 
-    async getCustomerList(customer_code: string, measure_type: any){
+    async getCustomerList(customer_code: string, measure_type: any) {
         const validMeasureTypes = ['WATER', 'GAS'];
 
-        if(measure_type && !validMeasureTypes.includes(measure_type.toUpperCase())) {
+        if (measure_type && !validMeasureTypes.includes(measure_type.toUpperCase())) {
             throw new InvalidType('Tipo de medição não permitida.');
         }
 
-        const customerId = await customerServices.findOrCreateCustomer(customer_code);
-        const measures = await measureServices.findMeasureByCustomer(customerId, measure_type);
+        try {
+            const customerId = await customerServices.findOrCreateCustomer(customer_code);
+            const measures = await measureServices.findMeasureByCustomer(customerId, measure_type);
 
-        if (measures.length === 0) {
-            throw new MeasureNotFound('Nenhuma leitura encontrada.');
+            if (measures.length === 0) {
+                throw new MeasureNotFound('Nenhuma leitura encontrada.');
+            }
+
+            return measures;
+        } catch (error) {
+            throw error;
         }
-
-        return measures;
     }
 
     validateNewMeasureData(body: NewMeasureRequestBody) {
         const { image, customer_code, measure_datetime, measure_type }: NewMeasureRequestBody = body;
 
-        if (!image || !customer_code || !measure_datetime || !measure_type) {
-            throw new InvalidDataError('All fields are required.');
+        const missingFields = ['image', 'customer_code', 'measure_datetime', 'measure_type']
+            .filter(field => !body[field as keyof NewMeasureRequestBody]);
+
+        if (missingFields.length > 0) {
+            throw new InvalidDataError(`The following fields are required: ${missingFields.join(', ')}.`);
         }
 
         if (!['WATER', 'GAS'].includes(measure_type)) {
@@ -102,12 +114,15 @@ class MeasureController {
         }
     }
 
-    
-    validateUpdateMeasureData(body: UpdateMeasureRequestBody) {
-        const { measure_uuid, confirmed_value}: UpdateMeasureRequestBody = body;
 
-        if (!measure_uuid || !confirmed_value) {
-            throw new InvalidDataError('All fields are required.');
+    validateUpdateMeasureData(body: UpdateMeasureRequestBody) {
+        const { measure_uuid, confirmed_value }: UpdateMeasureRequestBody = body;
+
+        const missingFields = ['measure_uuid', 'confirmed_value']
+            .filter(field => body[field as keyof UpdateMeasureRequestBody] == null);
+
+        if (missingFields.length > 0) {
+            throw new InvalidDataError(`The following fields are required: ${missingFields.join(', ')}.`);
         }
 
         if (!Number.isInteger(confirmed_value)) {
@@ -155,9 +170,13 @@ class MeasureController {
     }
 
     async validateMeasureMonth(body: NewMeasureRequestBody) {
-        const measure = await measureServices.findMeasureInMonth(body)
-        if(measure){
-            throw new DoubleReport('Leitura do mês já realizada')
+        try {
+            const measure = await measureServices.findMeasureInMonth(body)
+            if (measure) {
+                throw new DoubleReport('Leitura do mês já realizada')
+            }
+        } catch (error) {
+            throw error;
         }
     }
 

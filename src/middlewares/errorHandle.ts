@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+//erros
 import InvalidData from '../errors/InvalidData';
 import DoubleReport from '../errors/DoubleReport';
 import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
