@@ -4,8 +4,11 @@ import DoubleReport from '../errors/DoubleReport';
 import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
 
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-
-    if (err instanceof InvalidData || DoubleReport || ConfirmationDuplicate) {
+    function isValidationError(err: Error) {
+        return [InvalidData, DoubleReport, ConfirmationDuplicate].some(errorClass => err instanceof errorClass);
+    }
+    
+    if (isValidationError(err)) {
         res.status(err.statusCode).json({
             error_code: err.errorCode,
             error_description: err.message
