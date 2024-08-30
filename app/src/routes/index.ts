@@ -11,7 +11,8 @@ router.post("/upload",  async (req: Request, res: Response, next: NextFunction) 
         const measure = await measureController.post(req.body)
         res.status(200).json(measure);
     } catch (error) {
-        next(error);
+        console.log(error)
+        //next(error);
     }
 });
 

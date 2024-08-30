@@ -11,4 +11,4 @@ services:
       - .:/app
       - /app/node_modules
       - ./database:/app/database
-    command: npm start
+    command: sh -c "npx sequelize-cli db:migrate && npm start"   
