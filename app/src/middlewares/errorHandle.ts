@@ -3,9 +3,12 @@ import { Request, Response, NextFunction } from 'express';
 import InvalidData from '../errors/InvalidData';
 import DoubleReport from '../errors/DoubleReport';
 import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
+import MeasureNotFound from '../errors/MeasureNotFound';
+import MeasuresNotFound from '../errors/MeasuresNotFound';
+import InvalidType from '../errors/InvalidType';
 
 function isValidationError(err: Error) {
-    return [InvalidData, DoubleReport, ConfirmationDuplicate].some(errorClass => err instanceof errorClass);
+    return [InvalidData, DoubleReport, ConfirmationDuplicate, MeasureNotFound, InvalidType, MeasuresNotFound].some(errorClass => err instanceof errorClass);
 }
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     if (isValidationError(err)) {
