@@ -6,7 +6,6 @@ import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
 function isValidationError(err: Error) {
     return [InvalidData, DoubleReport, ConfirmationDuplicate].some(errorClass => err instanceof errorClass);
 }
-
 const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     if (isValidationError(err)) {
         res.status(err.statusCode).json({

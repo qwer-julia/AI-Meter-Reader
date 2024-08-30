@@ -1,0 +1,14 @@
+services:
+  app:
+    container_name: "app"
+    restart: always
+    build: .
+    environment:
+      - GEMINI_API_KEY=AIzaSyAHHCMRDs3pA76mOIaTpNTukKsm47TMuoQ
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./database:/app/database
+    command: sh -c "npx sequelize-cli db:migrate && npm start"   
