@@ -167,3 +167,33 @@ Lista as medidas realizadas por um cliente específico. Opcionalmente, pode filt
 ## Exemplo de Imagens em Base64
 
 Na raiz do projeto, há uma pasta chamada `imagens` contendo dois arquivos de texto. Ambos os arquivos possuem uma imagem em base64 que foi utilizada como exemplo para testes.
+
+## Testes Automatizados
+
+Para garantir a confiabilidade dos endpoints, foram implementados testes automatizados utilizando o framework Jest. Os testes cobrem os seguintes cenários:
+
+- **POST /upload:**
+  - Validação dos parâmetros enviados, incluindo o formato da imagem em base64.
+  - Verificação se já existe uma leitura registrada para o mês atual.
+  - Integração com a API LLM para extrair o valor da imagem e verificar se a resposta está correta.
+
+- **PATCH /confirm:**
+  - Verificação da existência do código de leitura.
+  - Confirmação ou correção do valor lido pela LLM.
+  - Validação se o código de leitura já foi confirmado anteriormente.
+
+- **GET /<customer_code>/list:**
+  - Testes para listar todas as medições realizadas por um cliente.
+  - Verificação do filtro opcional por tipo de medição (`measure_type`).
+  - Testes para cenários onde nenhum registro é encontrado.
+
+### Execução dos Testes
+
+Para executar os testes, utilize os seguintes comandos na raiz do projeto:
+
+```bash
+cd app
+npx sequelize-cli db:migrate:undo:all
+npx sequelize-cli db:migrate
+npm test
+```
