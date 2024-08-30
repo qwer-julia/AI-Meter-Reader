@@ -1,7 +1,7 @@
 import express, {Router, Request, Response, NextFunction } from "express";
 import MeasureController from "../controllers/measureController";
-const measureController = new MeasureController();
 
+const measureController = new MeasureController();
 const router: Router = express.Router();
 
 router.post("/upload",  async (req: Request, res: Response, next: NextFunction)  => {

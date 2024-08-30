@@ -1,33 +1,14 @@
-import { NewMeasureRequestBody, UpdateMeasureRequestBody } from '../controllers/measureController';
 import { Op } from 'sequelize';
-import CustomerServices from './CustomerServices';
 import { v4 as uuidv4 } from 'uuid';
+//services
+import CustomerServices from './CustomerServices';
 import saveBase64Image from '../utils/saveBase64Image'
+//types
+import {Measure, MeasureBody, UpdateMeasureRequestBody, NewMeasureRequestBody} from '../types/measureTypes'
 
 const customerServices = new CustomerServices();
 const dataSource = require('../models');
 const measureTable = dataSource['Measure'];
-
-interface MeasureBody {
-    measure_type: string,
-    measure_datetime: string,
-    customer_id: number,
-    measure_value: number,
-    image: string
-}
-
-interface Measure {
-    id: number, 
-    measure_uuid: string,
-    measure_datetime: string,
-    measure_type: 'WATER' | 'GAS',
-    measure_value: number,
-    has_confirmed: boolean,
-    image_url: string,
-    customer_id: number,
-    createdAt: string,
-    updatedAt: string
-}
 
 class MeasureServices {
     async createMeasure(measureBody: MeasureBody) {

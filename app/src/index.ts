@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import routes from './routes'
-import errorHandler from './middlewares/errorHandle'; // Caminho para o middleware de erro
+import errorHandler from './middlewares/errorHandle';
 import path from 'path';
 
 const app = express();

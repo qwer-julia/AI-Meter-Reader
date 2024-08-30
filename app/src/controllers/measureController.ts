@@ -1,15 +1,20 @@
+import axios from 'axios'
+import dotenv from 'dotenv';
+//utils
 import { isBase64 } from '../utils/isBase64';
 import { isValidDate } from '../utils/isValidDate';
 import { isString } from '../utils/isString';
+//erros
 import InvalidDataError from '../errors/InvalidData';
 import MeasureNotFound from '../errors/MeasureNotFound';
 import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
 import InvalidType from '../errors/InvalidType';
-import axios from 'axios'
-import dotenv from 'dotenv';
+import DoubleReport from '../errors/DoubleReport';
+//services
 import CustomerServices from '../services/CustomerServices'
 import MeasureServices from '../services/MeasureServices'
-import DoubleReport from '../errors/DoubleReport';
+//types
+import {UpdateMeasureRequestBody, NewMeasureRequestBody} from '../types/measureTypes'
 
 const customerServices = new CustomerServices();
 const measureServices = new MeasureServices();
@@ -20,19 +25,6 @@ const geminiApiKey = process.env.GEMINI_API_KEY;
 
 if (!geminiApiKey) {
     throw new Error("GEMINI_API_KEY não está definida");
-}
-
-export interface NewMeasureRequestBody {
-    image: string;
-    customer_code: string;
-    customer_id: number;
-    measure_datetime: string;
-    measure_type: 'WATER' | 'GAS';
-}
-
-export interface UpdateMeasureRequestBody {
-    measure_uuid: string;
-    confirmed_value: number;
 }
 
 class MeasureController {
