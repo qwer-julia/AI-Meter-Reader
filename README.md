@@ -1,62 +1,144 @@
-<h1>AI-Meter-Reader</h1><h2>Objetivo</h2><p>O <strong>AI-Meter-Reader</strong> é um serviço de back-end para gerenciar a leitura individualizada de consumo de água e gás. Utilizando inteligência artificial (IA), o serviço obtém medições a partir de fotos de medidores.</p><h2>Instalação e Configuração</h2><p>O projeto utiliza Docker para facilitar a execução. Siga os passos abaixo para configurar o ambiente local:</p><ol><li><p><strong>Clone o repositório:</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>bash</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-bash">git <span class="hljs-built_in">clone</span> https://github.com/qwer-julia/AI-Meter-Reader.git
-<span class="hljs-built_in">cd</span> AI-Meter-Reader
-</code></div></div></pre></li><li><p><strong>Construa a imagem Docker e inicie o container:</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>bash</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-bash">docker-compose build
+# AI-Meter-Reader
+## Objetivo
+O AI-Meter-Reader é um serviço de back-end para gerenciar a leitura individualizada de consumo de água e gás. Utilizando inteligência artificial (IA), o serviço obtém medições a partir de fotos de medidores.
+
+## Instalação e Configuração
+O projeto utiliza Docker para facilitar a execução. Siga os passos abaixo para configurar o ambiente local:
+
+### Clone o repositório:
+
+
+
+git clone https://github.com/qwer-julia/AI-Meter-Reader.git
+cd AI-Meter-Reader
+### Construa a imagem Docker e inicie o container:
+
+
+
+docker-compose build
 docker-compose up
-</code></div></div></pre></li></ol><h2>Endpoints da API</h2><h3>POST /upload</h3><p>Recebe uma imagem em base64, consulta o Gemini e retorna a medida lida pela API.</p><p><strong>Request Body:</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"image"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"base64"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"customer_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"measure_datetime"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"datetime"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"measure_type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"WATER"</span> ou <span class="hljs-string">"GAS"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre><p><strong>Response Body:</strong></p><ul><li><p><strong>200 OK</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"image_url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"measure_value"</span><span class="hljs-punctuation">:</span> integer<span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"measure_uuid"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li><li><p><strong>400 Bad Request</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"error_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"INVALID_DATA"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"error_description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"&lt;descrição do erro&gt;"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li><li><p><strong>409 Conflict</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"error_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"DOUBLE_REPORT"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"error_description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Leitura do mês já realizada"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li></ul><h3>PATCH /confirm</h3><p>Confirma ou corrige o valor lido pelo LLM.</p><p><strong>Request Body:</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"measure_uuid"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"confirmed_value"</span><span class="hljs-punctuation">:</span> integer
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre><p><strong>Response Body:</strong></p><ul><li><p><strong>200 OK</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"success"</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li><li><p><strong>400 Bad Request</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"error_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"INVALID_DATA"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"error_description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"&lt;descrição do erro&gt;"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li><li><p><strong>404 Not Found</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"error_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"MEASURE_NOT_FOUND"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"error_description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Leitura não encontrada"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li><li><p><strong>409 Conflict</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"error_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"CONFIRMATION_DUPLICATE"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"error_description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Leitura já confirmada"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li></ul><h3>GET /&lt;customer_code&gt;/list</h3><p>Lista as medidas realizadas por um cliente específico. Opcionalmente, pode filtrar por tipo de medição.</p><p><strong>Query Parameters:</strong></p><ul><li><code>measure_type</code>: Tipo de medição ("WATER" ou "GAS"), case insensitive.</li></ul><p><strong>Response Body:</strong></p><ul><li><p><strong>200 OK</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"customer_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"measures"</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-    <span class="hljs-punctuation">{</span>
-      <span class="hljs-attr">"measure_uuid"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">"measure_datetime"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"datetime"</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">"measure_type"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">"has_confirmed"</span><span class="hljs-punctuation">:</span> boolean<span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">"image_url"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"string"</span>
-    <span class="hljs-punctuation">}</span>
-  <span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li><li><p><strong>400 Bad Request</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"error_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"INVALID_TYPE"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"error_description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Tipo de medição não permitida"</span>
-<span class="hljs-punctuation">}</span>
-</code></div></div></pre></li><li><p><strong>404 Not Found</strong></p><pre><div class="dark bg-gray-950 contain-inline-size rounded-md border-[0.5px] border-token-border-medium"><div class="flex items-center relative text-token-text-secondary bg-token-main-surface-secondary px-4 py-2 text-xs font-sans justify-between rounded-t-md"><span>json</span><div class="flex items-center"><span class="" data-state="closed"><button class="flex gap-1 items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="icon-sm"><path fill="currentColor" fill-rule="evenodd" d="M7 5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-2v2a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h2zm2 2h5a3 3 0 0 1 3 3v5h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-9a1 1 0 0 0-1 1zM5 9a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1z" clip-rule="evenodd"></path></svg>Copiar código</button></span></div></div><div class="overflow-y-auto p-4" dir="ltr"><code class="!whitespace-pre hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">"error_code"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"MEASURES_NOT_FOUND"</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">"error_description"</span><span class="hljs-punctuation">:</span> <span class="hljs-string">"Nenhuma leitura encontrada"</span>
-<span class="hljs-punctuation">}</span>
+## Endpoints da API
+### POST /upload
+Recebe uma imagem em base64, consulta o Gemini e retorna a medida lida pela API.
+
+Request Body:
+
+
+
+{
+  "image": "base64",
+  "customer_code": "string",
+  "measure_datetime": "datetime",
+  "measure_type": "WATER" ou "GAS"
+}
+Response Body:
+
+200 OK
+
+
+
+{
+  "image_url": "string",
+  "measure_value": integer,
+  "measure_uuid": "string"
+}
+400 Bad Request
+
+
+
+{
+  "error_code": "INVALID_DATA",
+  "error_description": "<descrição do erro>"
+}
+409 Conflict
+
+
+
+{
+  "error_code": "DOUBLE_REPORT",
+  "error_description": "Leitura do mês já realizada"
+}
+### PATCH /confirm
+Confirma ou corrige o valor lido pelo LLM.
+
+Request Body:
+
+
+
+{
+  "measure_uuid": "string",
+  "confirmed_value": integer
+}
+Response Body:
+
+200 OK
+
+
+
+{
+  "success": true
+}
+400 Bad Request
+
+
+
+{
+  "error_code": "INVALID_DATA",
+  "error_description": "<descrição do erro>"
+}
+404 Not Found
+
+
+
+{
+  "error_code": "MEASURE_NOT_FOUND",
+  "error_description": "Leitura não encontrada"
+}
+409 Conflict
+
+
+
+{
+  "error_code": "CONFIRMATION_DUPLICATE",
+  "error_description": "Leitura já confirmada"
+}
+### GET /<customer_code>/list
+Lista as medidas realizadas por um cliente específico. Opcionalmente, pode filtrar por tipo de medição.
+
+Query Parameters:
+
+measure_type: Tipo de medição ("WATER" ou "GAS"), case insensitive.
+Response Body:
+
+200 OK
+
+
+
+{
+  "customer_code": "string",
+  "measures": [
+    {
+      "measure_uuid": "string",
+      "measure_datetime": "datetime",
+      "measure_type": "string",
+      "has_confirmed": boolean,
+      "image_url": "string"
+    }
+  ]
+}
+400 Bad Request
+
+
+
+{
+  "error_code": "INVALID_TYPE",
+  "error_description": "Tipo de medição não permitida"
+}
+404 Not Found
+
+
+
+{
+  "error_code": "MEASURES_NOT_FOUND",
+  "error_description": "Nenhuma leitura encontrada"
+}
