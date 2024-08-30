@@ -7,6 +7,7 @@ import { isString } from '../utils/isString';
 //erros
 import InvalidDataError from '../errors/InvalidData';
 import MeasureNotFound from '../errors/MeasureNotFound';
+import MeasuresNotFound from '../errors/MeasuresNotFound';
 import ConfirmationDuplicate from '../errors/ConfirmationDuplicate';
 import InvalidType from '../errors/InvalidType';
 import DoubleReport from '../errors/DoubleReport';
@@ -64,7 +65,7 @@ class MeasureController {
         const measures = await measureServices.findMeasureByCustomer(customerId, measure_type);
 
         if (measures.length === 0) {
-            throw new MeasureNotFound('Nenhuma leitura encontrada.');
+            throw new MeasuresNotFound('Nenhuma leitura encontrada.');
         }
 
         return measures;
