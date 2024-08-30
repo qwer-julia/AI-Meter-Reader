@@ -1,6 +1,6 @@
 import request from 'supertest';
-import app from '../../src/index';
-const dataSource = require('../../src/models');
+import app from '../../../src/index';
+const dataSource = require('../../../src/models');
 const measureTable = dataSource['Measure'];
 
 interface UploadResponseBody {
